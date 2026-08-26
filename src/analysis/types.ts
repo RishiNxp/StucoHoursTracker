@@ -3,7 +3,7 @@ export type WorkbookLike = { sheets: Record<string, Array<Record<string, unknown
 export type ValidationIssue = { code: string; message: string; sheet?: string; row?: number; column?: string };
 
 export type HistoryRow = { volunteerKey: string; name: string; email: string | null; hours: number; attendance: string; eventName: string; eventId: string | null; eventDate: Date };
-export type UpcomingRow = { volunteerKey: string; name: string; email: string | null; eventName: string; eventDate: Date; durationHours: number; status: string | null; team: string | null };
+export type UpcomingRow = { volunteerKey: string; name: string; email: string | null; eventName: string; eventDate: Date; durationHours: number; status: string | null; team: string | null; warning?: string };
 export type NormalizedHistory = { rows: HistoryRow[]; issues: ValidationIssue[] };
 export type NormalizedUpcoming = { rows: UpcomingRow[]; issues: ValidationIssue[] };
 

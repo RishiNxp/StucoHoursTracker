@@ -16,7 +16,19 @@ Each officer uses their own ChatGPT sign-in. Access is controlled by the STUCO o
 
 ## Local development
 
-The site uses the Vinext starter and Cloudflare D1/R2 bindings declared in `.openai/hosting.json`. Use Node.js 22 or newer, then run the starter’s development and build commands from the project directory. The visible dashboard is available at `/`; its upload modal is the first product slice, while the normalized analysis package under `src/analysis/` is ready to wire into the upload API.
+Use Node.js 22.13 or newer. On Windows PowerShell, run:
+
+```powershell
+cd "C:\Users\rishi\Documents\Codex\2026-08-25\referenced-chatgpt-conversation-this-is-an"
+npm.cmd install
+npm.cmd run dev
+```
+
+Open the local URL printed by Vinext. Choose **New analysis**, upload the Helper Helper Team Report and Upcoming Opportunities `.xlsx` exports, confirm the inclusive school-year dates and positive hour cap, and select **Analyze reports**. Each file must be 10 MiB or smaller.
+
+The current analysis is held only in the browser session. Refreshing or navigating away may discard it; History and officer management are not yet persisted. Workbook bytes are processed in memory, no emails are sent automatically, and Helper Helper registrations are never changed.
+
+Run `npm.cmd test`, `npm.cmd run lint`, and `npx.cmd tsc --noEmit` before publishing changes.
 
 ## Source documents
 

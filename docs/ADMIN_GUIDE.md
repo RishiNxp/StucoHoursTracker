@@ -17,6 +17,10 @@ Each officer signs in with their own ChatGPT account. Active officers can invite
 5. Review warnings before acting on any flag.
 6. Copy the draft for each optional event marked `Review / remove`.
 
+Both files must be `.xlsx` workbooks no larger than 10 MiB. The Team Report must contain `Commitments`; the upcoming export must contain `Opportunity Volunteers`. If the site reports a missing sheet, column, date, duration, duplicate, or malformed workbook, correct or re-export the source report and submit both files again.
+
+This milestone does not save analyses. A successful result is labeled **Current unsaved analysis** and can be lost on refresh. Copy any needed drafts before leaving the page. Missing volunteer email addresses remain visible as warnings and prevent draft creation for those registrations.
+
 Opportunity names containing `MANDATORY` are retained automatically and labeled `Mandatory · exempt`. Their hours still count toward the projection. A total of exactly 25 hours is allowed; only a total above 25 triggers review.
 
 ## Handoff

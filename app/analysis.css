@@ -1,0 +1,22 @@
+.welcome-state { min-height:calc(100vh - 180px); display:flex; flex-direction:column; align-items:flex-start; justify-content:center; max-width:650px; }
+.welcome-mark { width:54px; height:54px; border-radius:17px; display:grid; place-items:center; background:#ffe2dc; color:var(--coral); font-size:29px; margin-bottom:24px; }
+.welcome-state h1 { font-size:clamp(36px,5vw,62px); letter-spacing:-.06em; margin:0; }
+.welcome-state h1 em { color:var(--coral); font-family:Georgia,serif; font-weight:400; }
+.welcome-state>p:not(.eyebrow) { color:#748087; line-height:1.7; max-width:560px; }
+.welcome-state .primary-button { margin-top:14px; }
+.privacy-strip { margin-top:28px; padding:12px 15px; border:1px solid #dce8e5; background:#edf7f5; border-radius:7px; color:#56817d; font-size:10px; }
+.analysis-banner { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; margin-bottom:24px; border:1px solid #f2d0c8; border-radius:9px; background:#fff5f2; }
+.analysis-banner strong,.analysis-banner span { display:block; }
+.analysis-banner strong { color:#b94e3f; font-size:13px; }
+.analysis-banner span { color:#a77c73; font-size:10px; margin-top:4px; }
+.analysis-stats { margin-bottom:36px; }
+.empty-results { text-align:center; padding:58px 20px; color:#8c9698; font-size:12px; }
+.analysis-config { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:15px 0; }
+.analysis-config label { color:#68777b; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.analysis-config input { width:100%; display:block; margin-top:6px; border:1px solid #d9ddda; border-radius:6px; padding:9px 8px; color:#324b5c; background:#fff; font-size:10px; }
+.issue-list { border:1px solid #f0bcb3; background:#fff0ed; color:#a4493d; border-radius:7px; padding:11px 13px; margin:12px 0; font-size:10px; line-height:1.45; }
+.issue-list ul { margin:6px 0 0; padding-left:17px; }
+.submit-status { min-height:24px; text-align:center; color:#829093; font-size:9px; }
+.primary-button:disabled { opacity:.48; cursor:not-allowed; }
+.upload-modal { max-height:calc(100vh - 30px); overflow:auto; }
+@media (max-width:720px) { .analysis-config { grid-template-columns:1fr; } .analysis-banner { align-items:flex-start; gap:14px; flex-direction:column; } }

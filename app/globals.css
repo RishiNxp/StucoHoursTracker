@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./analysis.css";
 
 :root { --ink:#13243a; --muted:#718096; --line:#e8e6e1; --cream:#f8f7f3; --coral:#f06b57; --teal:#2a8b88; --blue:#4f79c7; }
 * { box-sizing:border-box; } html,body { margin:0; min-height:100%; background:var(--cream); color:var(--ink); } body { font-family:Arial,Helvetica,sans-serif; } button,input { font:inherit; } button { cursor:pointer; }
