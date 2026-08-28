@@ -1,0 +1,54 @@
+<style>
+  #stuco-review { --nav:#12243a; --cream:#f8f7f3; --ink:#182c43; --muted:#77858c; --coral:#f06b57; --teal:#2a8b88; --amber:#efa95a; font-family:Arial,sans-serif; color:var(--ink); display:grid; gap:24px; }
+  #stuco-review .window { background:var(--cream); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  #stuco-review .bar { background:var(--nav); color:#fff; padding:12px 18px; display:flex; gap:20px; align-items:center; font-size:12px; }
+  #stuco-review .brand { font-weight:700; letter-spacing:.12em; margin-right:auto; }
+  #stuco-review .bar span { opacity:.72; }
+  #stuco-review .bar .active { opacity:1; background:var(--coral); padding:7px 10px; border-radius:5px; }
+  #stuco-review .body { padding:20px; }
+  #stuco-review h3 { margin:0 0 5px; }
+  #stuco-review p { margin:0; color:var(--muted); }
+  #stuco-review .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0; }
+  #stuco-review .metric { background:#fff; border:1px solid #e6e3dc; padding:12px; border-radius:7px; }
+  #stuco-review .metric span { display:block; color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
+  #stuco-review .metric strong { display:block; font-size:24px; margin-top:5px; }
+  #stuco-review .chart { background:#fff; border:1px solid #e6e3dc; border-radius:8px; padding:14px; }
+  #stuco-review .legend { display:flex; gap:16px; font-size:10px; color:var(--muted); margin:8px 0; }
+  #stuco-review .dot { width:8px; height:8px; display:inline-block; border-radius:50%; margin-right:5px; }
+  #stuco-review svg { width:100%; height:170px; }
+  #stuco-review .axis { stroke:#d9d8d3; stroke-width:1; }.period { fill:none; stroke:var(--coral); stroke-width:3; }.cumulative { fill:none; stroke:var(--teal); stroke-width:3; }.point-a { fill:var(--coral); }.point-b { fill:var(--teal); }
+  #stuco-review .officer-head { display:flex; justify-content:space-between; align-items:start; margin-bottom:16px; }
+  #stuco-review .invite { background:var(--coral); color:#fff; border:0; border-radius:6px; padding:9px 12px; font-weight:700; }
+  #stuco-review .officer-row { display:grid; grid-template-columns:1.5fr 1.5fr .7fr .8fr; gap:12px; align-items:center; background:#fff; border-bottom:1px solid #eceae5; padding:12px 14px; font-size:11px; }
+  #stuco-review .officer-row:first-of-type { color:var(--muted); font-size:9px; text-transform:uppercase; }
+  #stuco-review .status { color:var(--teal); font-weight:700; }.pending { color:#b67732; }.deactivate { color:var(--coral); background:transparent; border:1px solid #f0c1b9; border-radius:5px; padding:6px 8px; }
+  @media(max-width:600px){#stuco-review .metrics{grid-template-columns:1fr 1fr}#stuco-review .officer-row{grid-template-columns:1fr 1fr}#stuco-review .bar span{display:none}}
+</style>
+<div id="stuco-review">
+  <div>
+    <div class="label">Overview — directly below Roster Performance</div>
+    <div class="window">
+      <div class="bar"><div class="brand">STUCO HOURS DESK</div><span class="active">Overview</span><span>New analysis</span><span>History</span><span>Officers</span></div>
+      <div class="body"><h3>Team metrics</h3><p>Validated activity for the selected school year</p>
+        <div class="metrics">
+          <div class="metric"><span>Total hours</span><strong>286.5</strong></div><div class="metric"><span>Participation</span><strong>81%</strong></div><div class="metric"><span>Average hours</span><strong>13.6</strong></div><div class="metric"><span>Median hours</span><strong>11.0</strong></div>
+          <div class="metric"><span>Active volunteers</span><strong>17 / 21</strong></div><div class="metric"><span>Zero-hour volunteers</span><strong>4</strong></div><div class="metric"><span>Opportunities</span><strong>74</strong></div><div class="metric"><span>Hours spread</span><strong>0–31</strong></div>
+        </div>
+        <div class="chart"><strong>Hours over time</strong><div class="legend"><span><i class="dot" style="background:var(--coral)"></i>Hours this period</span><span><i class="dot" style="background:var(--teal)"></i>Cumulative hours</span></div>
+          <svg viewBox="0 0 700 170" role="img" aria-label="Biweekly and cumulative team hours chart"><line class="axis" x1="42" y1="140" x2="680" y2="140"/><line class="axis" x1="42" y1="20" x2="42" y2="140"/><polyline class="period" points="45,127 135,105 225,116 315,78 405,94 495,61 585,86 675,52"/><polyline class="cumulative" points="45,136 135,127 225,116 315,97 405,78 495,57 585,39 675,22"/><g font-size="9" fill="#77858c"><text x="45" y="158">Aug 1</text><text x="205" y="158">Sep 12</text><text x="385" y="158">Oct 24</text><text x="555" y="158">Dec 5</text></g></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="label">Officers page</div>
+    <div class="window">
+      <div class="bar"><div class="brand">STUCO HOURS DESK</div><span>Overview</span><span>New analysis</span><span>History</span><span class="active">Officers</span></div>
+      <div class="body"><div class="officer-head"><div><h3>Officer access</h3><p>Manage who can view reports and save analyses.</p></div><button class="invite">＋ Invite officer</button></div>
+        <div class="officer-row"><span>Officer</span><span>Email</span><span>Status</span><span>Action</span></div>
+        <div class="officer-row"><strong>Local Demo Officer</strong><span>demo@stuco.local</span><span class="status">Active</span><button class="deactivate">Deactivate</button></div>
+        <div class="officer-row"><strong>Incoming Treasurer</strong><span>treasurer@school.org</span><span class="pending">Invite pending</span><button class="deactivate">Copy link</button></div>
+      </div>
+    </div>
+  </div>
+</div>

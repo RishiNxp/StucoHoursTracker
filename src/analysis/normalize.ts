@@ -1,4 +1,4 @@
-import type { HistoryRow, NormalizedHistory, NormalizedUpcoming, UpcomingRow, ValidationIssue, WorkbookLike } from "./types";
+import type { HistoryRow, NormalizedHistory, NormalizedRoster, NormalizedUpcoming, RosterStudent, UpcomingRow, ValidationIssue, WorkbookLike } from "./types";
 
 const excelDate = (value: unknown): Date | null => {
   if (value instanceof Date && !Number.isNaN(value.valueOf())) return value;
@@ -33,6 +33,41 @@ export function normalizeTeamReport(book: WorkbookLike): NormalizedHistory {
 export function normalizeUpcomingReport(book: WorkbookLike): NormalizedUpcoming {
   const required = ["OPPORTUNITY", "DATE AND TIME", "DURATION", "EMAIL ADDRESS", "TEAMS"];
   const { rows, issues } = requireSheet(book, "Opportunity Volunteers", required); const output: UpcomingRow[] = [];
-  rows.forEach((row, index) => { const name = text(row["OPPORTUNITY"]); if (!name) return; const date = excelDate(row["DATE AND TIME"]); const hours = durationHours(row["DURATION"]); const mail = email(row["EMAIL ADDRESS"]); if (!date) issues.push(issue("INVALID_DATE", "Upcoming event date/time is invalid.", "Opportunity Volunteers", index + 2, "DATE AND TIME")); if (hours == null) issues.push(issue("INVALID_DURATION", "Upcoming event duration is invalid.", "Opportunity Volunteers", index + 2, "DURATION")); if (date && hours != null) output.push({ volunteerKey: mail ?? name.toLowerCase(), name, email: mail, eventName: name, eventDate: date, durationHours: hours, status: text(row["STATUS"]) || null, team: text(row["TEAMS"]) || null }); });
+  rows.forEach((row, index) => { const name = text(row["OPPORTUNITY"]); if (!name) return; const date = excelDate(row["DATE AND TIME"]); const hours = durationHours(row["DURATION"]); const mail = email(row["EMAIL ADDRESS"]); const status = text(row["STATUS"]) || null; if (!date) issues.push(issue("INVALID_DATE", "Upcoming event date/time is invalid.", "Opportunity Volunteers", index + 2, "DATE AND TIME")); if (hours == null) issues.push(issue("INVALID_DURATION", "Upcoming event duration is invalid.", "Opportunity Volunteers", index + 2, "DURATION")); if (date && hours != null) output.push({ volunteerKey: mail ?? `missing-email:Opportunity Volunteers:${index + 2}`, name: mail ?? `Volunteer on row ${index + 2}`, email: mail, eventName: name, eventDate: date, durationHours: hours, status, team: text(row["TEAMS"]) || null, warning: status ? undefined : `Registration status is missing for ${name}.` }); });
   return { rows: output, issues };
+}
+
+const rosterNameAliases = ["volunteer name", "student name", "name", "full name"];
+const rosterEmailAliases = ["volunteer email", "email", "email address", "student email"];
+const rosterFirstNameAliases = ["first name", "firstname"];
+const rosterLastNameAliases = ["last name", "lastname"];
+const normalizedHeader = (value: string) => value.trim().toLowerCase().replace(/\s+/g, " ");
+const findHeader = (row: Record<string, unknown>, aliases: string[]) => Object.keys(row).find((key) => aliases.includes(normalizedHeader(key)));
+const normalizedName = (value: string) => value.trim().toLowerCase().replace(/\s+/g, " ");
+
+export function normalizeRosterReport(book: WorkbookLike): NormalizedRoster {
+  const entries = Object.entries(book.sheets);
+  for (const [sheet, sheetRows] of entries) {
+    const header = sheetRows[0] ?? {};
+    const nameColumn = findHeader(header, rosterNameAliases);
+    const firstNameColumn = findHeader(header, rosterFirstNameAliases);
+    const lastNameColumn = findHeader(header, rosterLastNameAliases);
+    if (!nameColumn && !(firstNameColumn && lastNameColumn)) continue;
+    const emailColumn = findHeader(header, rosterEmailAliases);
+    const merged = new Map<string, RosterStudent>();
+    for (const row of sheetRows.slice(1)) {
+      const name = nameColumn ? text(row[nameColumn]) : `${text(row[firstNameColumn!])} ${text(row[lastNameColumn!])}`.trim();
+      if (!name) continue;
+      const mail = emailColumn ? email(row[emailColumn]) : null;
+      const key = mail ?? normalizedName(name);
+      const existing = merged.get(key);
+      if (!existing) { merged.set(key, { volunteerKey: key, name, email: mail, warnings: [] }); continue; }
+      if (normalizedName(existing.name) !== normalizedName(name)) existing.warnings.push(`Conflicting roster names share ${mail ?? key}.`);
+      existing.warnings = [...new Set(existing.warnings)];
+    }
+    const rows = [...merged.values()];
+    return rows.length ? { rows, issues: [] } : { rows: [], issues: [issue("EMPTY_ROSTER", "The roster does not contain any students.", sheet)] };
+  }
+  const sheet = entries[0]?.[0] ?? "Roster";
+  return { rows: [], issues: [issue("MISSING_ROSTER_NAME_COLUMN", "The roster needs a combined name column or both First Name and Last Name columns.", sheet, 1)] };
 }

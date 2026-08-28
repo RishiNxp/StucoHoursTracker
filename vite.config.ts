@@ -12,7 +12,6 @@ const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 
 const localBindingConfig = {
   main: "./worker/index.ts",
-  compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
         {
@@ -45,7 +44,6 @@ export default defineConfig(async () => {
   // still run in a Windows workspace where the optional package is absent.
   const sites = async () => {
     try {
-      // @ts-expect-error The hosted Sites runtime provides this optional module.
       const mod = await import("@openai/sites-vite-plugin");
       return mod.sites();
     } catch {
