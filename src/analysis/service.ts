@@ -1,12 +1,15 @@
 import { classifyVolunteerHours } from "./classify";
 import { buildVolunteerDraft, type Draft } from "./drafts";
-import { normalizeTeamReport, normalizeUpcomingReport } from "./normalize";
-import type { ClassificationResult, EventClassification, ValidationIssue } from "./types";
+import { normalizeRosterReport, normalizeTeamReport, normalizeUpcomingReport } from "./normalize";
+import { buildPerformanceResult } from "./performance";
+import { buildTeamMetrics } from "./team-metrics";
+import type { ClassificationResult, EventClassification, PerformanceResult, TeamMetricsResult, ValidationIssue } from "./types";
 import { parseWorkbook } from "./workbook";
 
 export type AnalyzeReportsInput = {
   teamReport: ArrayBuffer;
   upcomingReport: ArrayBuffer;
+  rosterReport?: ArrayBuffer;
   schoolYearStart: string;
   schoolYearEnd: string;
   capHours: number;
@@ -25,6 +28,8 @@ export type AnalyzeReportsResult = {
   configuration: { schoolYearStart: string; schoolYearEnd: string; schoolYearLabel: string; capHours: number };
   summary: ClassificationResult["summary"];
   volunteers: SerializedVolunteer[];
+  performance?: PerformanceResult;
+  teamMetrics?: TeamMetricsResult;
   issues: ValidationIssue[];
 };
 
@@ -35,7 +40,8 @@ export function analyzeReports(input: AnalyzeReportsInput): AnalyzeReportsResult
   const configuration = { schoolYearStart: input.schoolYearStart, schoolYearEnd: input.schoolYearEnd, schoolYearLabel: schoolYearLabel(input.schoolYearStart, input.schoolYearEnd), capHours: input.capHours };
   const history = normalizeTeamReport(parseWorkbook(input.teamReport));
   const upcoming = normalizeUpcomingReport(parseWorkbook(input.upcomingReport));
-  const issues = [...history.issues, ...upcoming.issues];
+  const roster = input.rosterReport ? normalizeRosterReport(parseWorkbook(input.rosterReport)) : undefined;
+  const issues = [...history.issues, ...upcoming.issues, ...(roster?.issues ?? [])];
   const seen = new Set<string>();
   for (const row of upcoming.rows) {
     const key = `${row.volunteerKey}|${row.eventName.toLowerCase()}|${row.eventDate.toISOString()}`;
@@ -44,9 +50,11 @@ export function analyzeReports(input: AnalyzeReportsInput): AnalyzeReportsResult
   }
   if (issues.length) return { configuration, summary: emptySummary, volunteers: [], issues };
 
+  const schoolYearStart = new Date(`${input.schoolYearStart}T00:00:00.000Z`);
+  const schoolYearEnd = new Date(`${input.schoolYearEnd}T23:59:59.999Z`);
   const result = classifyVolunteerHours({
-    schoolYearStart: new Date(`${input.schoolYearStart}T00:00:00.000Z`),
-    schoolYearEnd: new Date(`${input.schoolYearEnd}T23:59:59.999Z`),
+    schoolYearStart,
+    schoolYearEnd,
     capHours: input.capHours, history: history.rows, upcoming: upcoming.rows,
   });
   const volunteers = result.volunteers.map((volunteer) => ({
@@ -60,5 +68,7 @@ export function analyzeReports(input: AnalyzeReportsInput): AnalyzeReportsResult
       }) : undefined,
     })),
   }));
-  return { configuration, summary: result.summary, volunteers, issues: [] };
+  const performance = roster ? buildPerformanceResult(roster.rows, history.rows, schoolYearStart, schoolYearEnd) : undefined;
+  const teamMetrics = roster ? buildTeamMetrics(roster.rows, history.rows, schoolYearStart, schoolYearEnd) : undefined;
+  return { configuration, summary: result.summary, volunteers, performance, teamMetrics, issues: [] };
 }

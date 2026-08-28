@@ -15,6 +15,11 @@ const upcoming = () => bytes({ "Opportunity Volunteers": [
   ["OPPORTUNITY", "DATE AND TIME", "DURATION", "EMAIL ADDRESS", "TEAMS", "STATUS"],
   ["Food Drive", "2026-09-12", 2, "jordan@example.com", "STUCO", "Active"],
 ] });
+const roster = () => bytes({ Roster: [
+  ["Student Name", "Email Address"],
+  ["Jordan", "jordan@example.com"],
+  ["No Activity", "none@example.com"],
+] });
 
 describe("analyzeReports", () => {
   it("returns JSON-safe real results and a configurable draft", () => {
@@ -38,5 +43,19 @@ describe("analyzeReports", () => {
     ] });
     const result = analyzeReports({ teamReport: team(), upcomingReport: report, schoolYearStart: "2026-08-01", schoolYearEnd: "2027-07-31", capHours: 25 });
     expect(result.volunteers.find((volunteer) => !volunteer.email)?.events[0].draft).toBeUndefined();
+  });
+
+  it("adds roster performance while retaining zero-activity students", () => {
+    const result = analyzeReports({ teamReport: team(), upcomingReport: upcoming(), rosterReport: roster(), schoolYearStart: "2026-08-01", schoolYearEnd: "2027-07-31", capHours: 25 });
+    expect(result.performance?.students).toHaveLength(2);
+    expect(result.performance?.students.find((student) => student.name === "No Activity")?.validatedHours).toBe(0);
+    expect(result.teamMetrics).toMatchObject({ rosterSize: 2, activeVolunteers: 1, zeroHourVolunteers: 1 });
+    expect(result.teamMetrics?.periods.length).toBeGreaterThan(0);
+  });
+
+  it("omits roster-only results when no roster is provided", () => {
+    const result = analyzeReports({ teamReport: team(), upcomingReport: upcoming(), schoolYearStart: "2026-08-01", schoolYearEnd: "2027-07-31", capHours: 25 });
+    expect(result.performance).toBeUndefined();
+    expect(result.teamMetrics).toBeUndefined();
   });
 });
